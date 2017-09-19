@@ -1,10 +1,13 @@
+import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 import utils, torch, time, os, pickle, itertools
 import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import matplotlib.pyplot as plt
+
 from torch.autograd import Variable
+
 
 class generator(nn.Module):
     # Network Architecture is exactly same as in infoGAN (https://arxiv.org/abs/1606.03657)
@@ -180,8 +183,6 @@ class infoGAN(object):
         self.train_hist['info_loss'] = []
         self.train_hist['per_epoch_time'] = []
         self.train_hist['total_time'] = []
-        import pdb
-        pdb.set_trace()
         if self.gpu_mode:
             self.y_real_, self.y_fake_ = Variable(torch.ones(self.batch_size, 1).cuda()), Variable(torch.zeros(self.batch_size, 1).cuda())
         else:
