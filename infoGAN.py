@@ -126,7 +126,7 @@ class infoGAN(object):
         self.y_dim = 10
 
         # fixed noise & condition
-        self.sample_z_ = torch.zeros((self.sample_num, self.z_dim))
+        self.sample_z_ = torch.zeros((self.sample_num, self.z_dim)) #100*62
         for i in range(10):
             self.sample_z_[i*self.y_dim] = torch.rand(1, self.z_dim)
             for j in range(1, self.y_dim):
@@ -141,26 +141,26 @@ class infoGAN(object):
             temp_y[i*self.y_dim: (i+1)*self.y_dim] = temp
 
         self.sample_y_ = torch.zeros((self.sample_num, self.y_dim))
-        self.sample_y_.scatter_(1, temp_y.type(torch.LongTensor), 1)
-        self.sample_c_ = torch.zeros((self.sample_num, self.len_continuous_code))
+        self.sample_y_.scatter_(1, temp_y.type(torch.LongTensor), 1) #100*10
+        self.sample_c_ = torch.zeros((self.sample_num, self.len_continuous_code)) #100*2
 
         # manipulating two continuous code
         temp_z_ = torch.rand((1, self.z_dim))
         self.sample_z2_ = temp_z_
         for i in range(self.sample_num - 1):
-            self.sample_z2_ = torch.cat([self.sample_z2_, temp_z_])
+            self.sample_z2_ = torch.cat([self.sample_z2_, temp_z_]) #100*62
 
         y = np.zeros(self.sample_num, dtype=np.int64)
         y_one_hot = np.zeros((self.sample_num, self.len_discrete_code))
         y_one_hot[np.arange(self.sample_num), y] = 1
-        self.sample_y2_ = torch.from_numpy(y_one_hot).type(torch.FloatTensor)
+        self.sample_y2_ = torch.from_numpy(y_one_hot).type(torch.FloatTensor) #100*10
 
         temp_c = torch.linspace(-1, 1, 10)
         self.sample_c2_ = torch.zeros((self.sample_num, 2))
         for i in range(10):
             for j in range(10):
                 self.sample_c2_[i*10+j, 0] = temp_c[i]
-                self.sample_c2_[i*10+j, 1] = temp_c[j]
+                self.sample_c2_[i*10+j, 1] = temp_c[j]  #100*2
 
         if self.gpu_mode:
             self.sample_z_, self.sample_y_, self.sample_c_, self.sample_z2_, self.sample_y2_, self.sample_c2_ = \
@@ -180,7 +180,8 @@ class infoGAN(object):
         self.train_hist['info_loss'] = []
         self.train_hist['per_epoch_time'] = []
         self.train_hist['total_time'] = []
-
+        import pdb
+        pdb.set_trace()
         if self.gpu_mode:
             self.y_real_, self.y_fake_ = Variable(torch.ones(self.batch_size, 1).cuda()), Variable(torch.zeros(self.batch_size, 1).cuda())
         else:
